@@ -1,0 +1,10 @@
+replicaCount: 2
+
+image:
+  repository: IMAGE_NAME
+  pullPolicy: IfNotPresent
+  tag: IMAGE_TAG
+
+service:
+  type: NodePort
+  port: 8080
