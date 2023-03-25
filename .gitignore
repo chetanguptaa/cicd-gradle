@@ -7,3 +7,8 @@ build
 bin
 
 terraform/.terraform
+
+ansible/docker.yml
+ansible/inventory.ini
+ansible/jenkins.yml
+ansible/kubernetes.yml
