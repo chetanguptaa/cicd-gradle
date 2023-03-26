@@ -7,6 +7,9 @@ build
 bin
 
 terraform/.terraform
+terraform/terraform.tfstate
+terraform/ssh-config.tpl
+terraform/userdata.tpl
 
 ansible/docker.yml
 ansible/inventory.ini
