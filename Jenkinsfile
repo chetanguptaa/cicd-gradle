@@ -42,7 +42,33 @@ pipeline {
         steps {
             script {
                 dir('kubernetes/') {
-                    sh 'helm datree test myapp/'
+                    withEnv(['DATREE_TOKEN=fjelk48t43ejhge95gedf']) {
+                        sh 'helm datree test myapp/'
+                    }
+                }
+            }
+        }
+    }
+    stage("docker build && docker push") {
+        steps {
+            withCredentials([string(credentialsId: 'docker_password', variable: 'docker_password')]) {
+                dir('kubernetes/') {
+                    sh '''
+                        helmversion=$( helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
+                        tar -czvf myapp-${helmversion}.tgz myapp/
+                        curl -u admin:$docker_password http://24.178.223.55:8081/repository/helm-hosted/ --upload-file myapp-${helmversion}.tgz -v
+                    '''
+                }
+            }
+        }
+    }
+    stage('Deploying application on kubernetes cluster') {
+        steps {
+            script {
+                withCredentials([kubeconfigFile(credentialsId: 'kubernetes-config', variable: 'KUBECONFIG')]) {
+                    dir('kubernetes/') {
+                        sh 'helm upgrade --install --set image.repository="chetanguptaa/springapp" --set image.tag="${VERSION}" myjavaapp myapp/ '
+                    }
                 }
             }
         }
